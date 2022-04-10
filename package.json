@@ -1,0 +1,29 @@
+{
+  "name": "linkedin-service",
+  "version": "1.0.0",
+  "description": "LinkedIn Service working with its API",
+  "main": "dist/index.js",
+  "scripts": {
+    "serve": "NODE_PATH=./dist node --require 'dotenv/config' dist/src",
+    "dist": "babel src --out-dir dist/src",
+    "start": "npm run dist && npm run serve"
+  },
+  "author": "Esteban Solorzano <estebansolorzano27@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.12.8",
+    "@babel/core": "^7.12.9",
+    "@babel/node": "^7.16.8",
+    "@babel/preset-env": "^7.12.7",
+    "babel-plugin-module-resolver": "^4.1.0"
+  },
+  "dependencies": {
+    "axios": "^0.26.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "qs": "^6.10.3",
+    "swagger-ui-express": "^4.3.0"
+  }
+}
