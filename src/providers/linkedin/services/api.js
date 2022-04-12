@@ -1,16 +1,16 @@
 import axios from 'axios'
-import { LINKEDIN } from 'src/config/constants'
+import { LINKEDIN_URLS } from 'src/config/constants'
 
 
 class Api {
     constructor() {
-        this.connections_url = `${LINKEDIN.CONNECTIONS_URL}/urn:li:person:`
+        this.connections_url = `${LINKEDIN_URLS.CONNECTIONS_URL}/urn:li:person:`
     }
 
     getLinkedInId(token) {
         return axios({
             method: 'get',
-            url: LINKEDIN.ME_URL,
+            url: LINKEDIN_URLS.ME_URL,
             headers: {
                 'Authorization': `Bearer ${token}` 
             }

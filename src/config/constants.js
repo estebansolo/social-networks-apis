@@ -1,4 +1,5 @@
 export const RESPONSES = {
+    MISSING_API_FIELDS: "Missing values for required API fields",
     MISSING_FIELDS_OR_WRONG_INPUTS: "Missing fields or wrong inputs.",
     INVALID_URL_FORMAT: "Invalid URL format",
     AUTHENTICATION_TOKEN_REQUIRED: "Authentication token is required to use the API",
@@ -13,7 +14,7 @@ export const HTTP_STATUS = {
     INTERNAL_SERVER_ERROR: 500
 }
 
-export const LINKEDIN = {
+export const LINKEDIN_URLS = {
     ME_URL: 'https://api.linkedin.com/v2/me',
     SHARE_URL: 'https://api.linkedin.com/v2/shares',
     CONNECTIONS_URL: 'https://api.linkedin.com/v2/connections',
@@ -21,10 +22,13 @@ export const LINKEDIN = {
     ACCESS_TOKEN_URL: 'https://www.linkedin.com/oauth/v2/accessToken'
 }
 
-export const TWITTER = {
-
+export const TWITTER_URLS = {
+    AUTHORIZATION_URL: '',
+    ACCESS_TOKEN_URL: ''
 }
 
-export const FACEBOOK = {
-    
+export const FACEBOOK_URLS = {
+    AUTHORIZATION_URL: 'https://www.facebook.com/v13.0/dialog/oauth',
+    ACCESS_TOKEN_URL: 'https://graph.facebook.com/oauth/access_token',
+    VERIFICATION_TOKEN_URL: 'https://graph.facebook.com/v13.0/debug_token'
 }

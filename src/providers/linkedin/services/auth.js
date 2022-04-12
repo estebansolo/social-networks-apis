@@ -1,55 +1,28 @@
-import qs from 'qs'
-import axios from 'axios'
-import { LINKEDIN } from 'src/config/constants'
+import { LINKEDIN_URLS } from 'src/config/constants'
+import OAuthHelper from 'src/utilities/oauth_helper'
 
 
 class Auth {
     constructor() {
-        this.scopes = process.env.LINKEDIN_SCOPES
-        this.client_id = process.env.LINKEDIN_CLIENT_ID
-        this.redirect_uri = process.env.LINKEDIN_REDIRECT_URI
-        this.client_secret = process.env.LINKEDIN_CLIENT_SECRET
+        this.oauth = new OAuthHelper(
+            process.env.LINKEDIN_SCOPES,
+            process.env.LINKEDIN_CLIENT_ID,
+            process.env.LINKEDIN_REDIRECT_URI,
+            process.env.LINKEDIN_CLIENT_SECRET,
+            LINKEDIN_URLS
+        )
     }
 
     getUrl() {
-        if (!this.scopes || !this.client_id || !this.redirect_uri || !this.client_secret) {
-            return Promise.reject()
-        }
-
-        const scope = encodeURIComponent(this.scopes);
-        const redirectUrl = encodeURIComponent(this.redirect_uri)
-
-        return Promise.resolve({
-            'url': `${LINKEDIN.AUTHORIZATION_URL}?response_type=code&client_id=${this.client_id}&redirect_uri=${redirectUrl}&scope=${scope}`
-        }) 
+        return this.oauth.authorizationUrl()
     }
 
-    getAuthCode(code_or_token, refresh_token = false) {
-        const refresh_token_data = {
-            refresh_token: code_or_token,
-            grant_type: 'refresh_token',
-            client_id: this.client_id,
-            client_secret: this.client_secret
+    async getAuthCode(code_or_token, refresh_token = false) {
+        if (refresh_token) {
+            return this.oauth.fetchRefreshToken(code_or_token)
         }
 
-        const access_token_data = {
-            code: code_or_token,
-            grant_type: 'authorization_code',
-            client_id: this.client_id,
-            redirect_uri: this.redirect_uri,
-            client_secret: this.client_secret
-        }
-
-        const data = qs.stringify(refresh_token ? refresh_token_data : access_token_data)
-        
-        return axios({
-            data,
-            method: 'post',
-            url: LINKEDIN.ACCESS_TOKEN_URL,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
-        })
+        return this.oauth.fetchToken(code_or_token)
     }
 }
 
