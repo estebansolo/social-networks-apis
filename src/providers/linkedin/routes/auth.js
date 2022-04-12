@@ -26,7 +26,7 @@ router.get('/callback', (req, res) => {
         })   
     } else {
         res.status(HTTP_STATUS.BAD_REQUEST).send({
-            error: "Code parameter is required to perform the authentication operation"
+            error: RESPONSES.MISSING_CALLBACK_CODE
         })
     }
 })

@@ -1,6 +1,9 @@
 export const RESPONSES = {
     MISSING_FIELDS_OR_WRONG_INPUTS: "Missing fields or wrong inputs.",
-    INVALID_URL_FORMAT: "Invalid URL format"
+    INVALID_URL_FORMAT: "Invalid URL format",
+    AUTHENTICATION_TOKEN_REQUIRED: "Authentication token is required to use the API",
+    MISSING_CALLBACK_CODE: "Code parameter is required to perform the authentication operation",
+    API_ERROR: "There was an unexpected error with the API"
 };
 
 export const HTTP_STATUS = {
@@ -11,6 +14,9 @@ export const HTTP_STATUS = {
 }
 
 export const LINKEDIN = {
+    ME_URL: 'https://api.linkedin.com/v2/me',
+    SHARE_URL: 'https://api.linkedin.com/v2/shares',
+    CONNECTIONS_URL: 'https://api.linkedin.com/v2/connections',
     AUTHORIZATION_URL: 'https://www.linkedin.com/oauth/v2/authorization',
     ACCESS_TOKEN_URL: 'https://www.linkedin.com/oauth/v2/accessToken'
 }
