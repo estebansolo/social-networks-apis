@@ -23,8 +23,9 @@ export const LINKEDIN_URLS = {
 }
 
 export const TWITTER_URLS = {
-    AUTHORIZATION_URL: '',
-    ACCESS_TOKEN_URL: ''
+    REQUEST_TOKEN_URL: 'https://twitter.com/oauth/request_token',
+    ACCESS_TOKEN_URL: 'https://twitter.com/oauth/access_token',
+    VERIFICATION_TOKEN_URL: 'https://api.twitter.com/1.1/account/verify_credentials.json'
 }
 
 export const FACEBOOK_URLS = {
