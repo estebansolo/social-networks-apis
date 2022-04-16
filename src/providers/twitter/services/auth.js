@@ -1,60 +1,29 @@
-import oauth from 'oauth'
+import OAuthHelper from 'src/utilities/oauth_helper'
 import { TWITTER_URLS } from 'src/config/constants'
 
 
 class Auth {
     constructor() {
-        this.oauth = new oauth.OAuth(
-            TWITTER_URLS.REQUEST_TOKEN_URL, TWITTER_URLS.ACCESS_TOKEN_URL,
-            process.env.TWITTER_CLIENT_ID, process.env.TWITTER_CLIENT_SECRET,
-            "1.0A", process.env.TWITTER_REDIRECT_URI, "HMAC-SHA1"
-        );
+        this.oauth = new OAuthHelper(
+            process.env.TWITTER_SCOPES,
+            process.env.TWITTER_CLIENT_ID,
+            process.env.TWITTER_REDIRECT_URI,
+            process.env.TWITTER_CLIENT_SECRET,
+            TWITTER_URLS,
+            true
+        )
     }
 
     getUrl() {
-        return new Promise((resolve, reject) => {
-            this.oauth.getOAuthRequestToken((error, oauthToken, oauthTokenSecret, results) => {
-                if (error) {
-                    return reject(error)
-                }
-                
-                resolve({
-                    oauthToken,
-                    oauthTokenSecret,
-                    url: `https://twitter.com/oauth/authenticate?oauth_token=${oauthToken}`
-                })
-            });
-        })
+        return this.oauth.authorizationUrl()
     }
 
-    getAuthCode(oauthToken, oauthVerifier) {
-        return new Promise((resolve, reject) => {
-            this.oauth.getOAuthAccessToken(
-                oauthToken, null, oauthVerifier,
-                (error, oauthAccessToken, oauthAccessTokenSecret, results) => {
-                    if (error) {
-                        return reject(error)
-                    }
+    getAuthCode(codeOrToken, isRefreshToken = false) {
+        if (isRefreshToken) {
+            return this.oauth.fetchRefreshToken(codeOrToken)
+        }
 
-                    resolve({
-                        'access_token': oauthAccessToken,
-                        'access_token_secret': oauthAccessTokenSecret
-                    })
-                }
-            );
-        })
-    }
-
-    verifyToken(accessToken, accessTokenSecret) {
-        return new Promise((resolve, reject) => {
-            this.oauth.get(TWITTER_URLS.VERIFICATION_TOKEN_URL, '1038054131381035008-Wgn11gDY76co6PHHzYqEM0tZ8Xn6Xr', accessTokenSecret, (error, data, response) => {
-                if (error) {
-                    return reject(error)
-                }
-                
-                resolve(JSON.parse(data))
-            });
-        })
+        return this.oauth.fetchToken(codeOrToken)
     }
 }
 

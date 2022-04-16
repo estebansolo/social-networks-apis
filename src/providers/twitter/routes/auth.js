@@ -8,21 +8,19 @@ const router = express.Router()
 
 
 router.get('/', (req, res) => {
-    auth.getUrl()
-        .then(response => res.json(response))
-        .catch(error => res.status(HTTP_STATUS.UNAUTHORIZED).send({
-            error: error
-        }))
+    res.json(auth.getUrl())
 })
 
 
 router.get('/callback', (req, res) => {
-    if(req.query.oauth_token && req.query.oauth_verifier) {
-        auth.getAuthCode(req.query.oauth_token, req.query.oauth_verifier)
-            .then(response => res.json(response))
-            .catch(error => res.status(HTTP_STATUS.UNAUTHORIZED).send({
-                error: error
-            }))
+    if(req.query.code) {
+        auth.getAuthCode(req.query.code)
+            .then(response => res.json(response.data))
+            .catch(error => {
+                res.status(HTTP_STATUS.UNAUTHORIZED).send({
+                    error: error.response.data.error_description
+                })
+            })
     } else {
         res.status(HTTP_STATUS.BAD_REQUEST).send({
             error: RESPONSES.MISSING_CALLBACK_CODE
@@ -30,16 +28,21 @@ router.get('/callback', (req, res) => {
     }
 })
 
-router.get('/verify_token', (req, res) => {
-    if(req.query.access_token && req.query.access_token_secret) {
-        auth.verifyToken(req.query.access_token, req.query.access_token_secret)
-            .then(response => res.json(response))
-            .catch(error => res.status(HTTP_STATUS.UNAUTHORIZED).send({
-                error: error
-            }))   
+
+router.put('/refresh_token', (req, res) => {
+    const refreshToken = req.body.refresh_token ? req.body.refresh_token : null 
+    
+    if(refreshToken) {
+        auth.getAuthCode(refreshToken, true)
+            .then(response => res.json(response.data))
+            .catch(error => {
+                res.status(HTTP_STATUS.UNAUTHORIZED).send({
+                    error: error.response.data.error_description
+                })
+            })
     } else {
         res.status(HTTP_STATUS.BAD_REQUEST).send({
-            error: RESPONSES.AUTHENTICATION_TOKEN_REQUIRED
+            error: RESPONSES.MISSING_FIELDS_OR_WRONG_INPUTS
         })
     }
 })

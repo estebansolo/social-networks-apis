@@ -15,21 +15,20 @@ export const HTTP_STATUS = {
 }
 
 export const LINKEDIN_URLS = {
-    ME_URL: 'https://api.linkedin.com/v2/me',
-    SHARE_URL: 'https://api.linkedin.com/v2/shares',
-    CONNECTIONS_URL: 'https://api.linkedin.com/v2/connections',
     AUTHORIZATION_URL: 'https://www.linkedin.com/oauth/v2/authorization',
-    ACCESS_TOKEN_URL: 'https://www.linkedin.com/oauth/v2/accessToken'
+    ACCESS_TOKEN_URL: 'https://www.linkedin.com/oauth/v2/accessToken',
+    API_URL: 'https://api.linkedin.com/v2'
 }
 
 export const TWITTER_URLS = {
-    REQUEST_TOKEN_URL: 'https://twitter.com/oauth/request_token',
-    ACCESS_TOKEN_URL: 'https://twitter.com/oauth/access_token',
-    VERIFICATION_TOKEN_URL: 'https://api.twitter.com/1.1/account/verify_credentials.json'
+    AUTHORIZATION_URL: 'https://twitter.com/i/oauth2/authorize',
+    ACCESS_TOKEN_URL: 'https://api.twitter.com/2/oauth2/token',
+    API_URL: 'https://api.twitter.com/2'
 }
 
 export const FACEBOOK_URLS = {
     AUTHORIZATION_URL: 'https://www.facebook.com/v13.0/dialog/oauth',
     ACCESS_TOKEN_URL: 'https://graph.facebook.com/oauth/access_token',
+    API_URL: 'https://graph.facebook.com/v13.0',
     VERIFICATION_TOKEN_URL: 'https://graph.facebook.com/v13.0/debug_token'
 }

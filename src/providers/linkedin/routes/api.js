@@ -1,6 +1,6 @@
 import express from 'express'
 import Api from 'linkedin/services/api'
-import { HTTP_STATUS, RESPONSES } from "src/config/constants";
+import { HTTP_STATUS, RESPONSES } from "src/config/constants"
 
 
 const api = new Api();
@@ -8,10 +8,10 @@ const router = express.Router()
 
 
 router.get('/me', (req, res) => {
-    const token = req.body.token ? req.body.token : null
+    const token = req.query.token ? req.query.token : null
 
     if(token){
-        api.getLinkedInId(token).then(response => {
+        api.getBasicInfo(token).then(response => {
             res.json(response.data)
         }).catch(() => {
             res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
@@ -27,8 +27,8 @@ router.get('/me', (req, res) => {
 
 
 router.get('/connections', (req, res) => {
-    const token = req.body.token ? req.body.token : null
-    const linkedinId = req.body.linkedin_id ? req.body.linkedin_id : null
+    const token = req.query.token ? req.query.token : null
+    const linkedinId = req.query.linkedin_id ? req.query.linkedin_id : null
 
     if(token){
         api.getConnections(token, linkedinId).then(response => {
@@ -47,6 +47,7 @@ router.get('/connections', (req, res) => {
 
 
 router.post('/share', (req, res) => {
+    // SHARE_URL: 'https://api.linkedin.com/v2/shares'
     app.post('/publish', async (req, res) => {
         const { title, text, url, thumb, id } = req.body;
         const errors = [];

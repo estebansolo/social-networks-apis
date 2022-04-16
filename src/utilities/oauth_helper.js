@@ -4,68 +4,84 @@ import { RESPONSES } from "src/config/constants";
 
 
 class OAuthHelper {
-    constructor(scopes, client_id, redirect_uri, client_secret, oauth_urls) {
-        if (!scopes || !client_id || !redirect_uri || !client_secret) {
-            throw RESPONSES.MISSING_API_FIELDS
+    /* Helper for OAuth V2 Applications */
+    
+    constructor(scopes, clientId, redirectUri, clientSecret, urls, useAuthentication = false) {
+        this.urls = urls
+        this.scopes = scopes
+        this.clientId = clientId
+        this.redirectUri = redirectUri
+        this.clientSecret = clientSecret
+
+        this.headers = {
+            "Content-Type": "application/x-www-form-urlencoded"
         }
 
-        this.scopes = scopes
-        this.client_id = client_id
-        this.redirect_uri = redirect_uri
-        this.client_secret = client_secret
-        this.oauth_urls = oauth_urls
+        if (useAuthentication){
+            const authClient = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
+            this.headers['Authorization'] = `Basic ${authClient}`
+        }
     }
 
     authorizationUrl() {
+        if (!this.scopes || !this.clientId || !this.redirectUri || !this.clientSecret) {
+            return {
+                error: RESPONSES.MISSING_API_FIELDS
+            }
+        }
+
         const scope = encodeURIComponent(this.scopes);
-        const redirectUrl = encodeURIComponent(this.redirect_uri)
+        const redirectUrl = encodeURIComponent(this.redirectUri)
+
+        // TODO: Improve this according to the OAuth2 Standards
+        // https://www.oauth.com/oauth2-servers/pkce/authorization-request/
+        const complement = 'state=state&code_challenge=challenge&code_challenge_method=plain'
 
         return {
-            'url': `${this.oauth_urls.AUTHORIZATION_URL}?response_type=code&client_id=${this.client_id}&redirect_uri=${redirectUrl}&scope=${scope}`
+            'url': `${this.urls.AUTHORIZATION_URL}?response_type=code&client_id=${this.clientId}&redirect_uri=${redirectUrl}&scope=${scope}&${complement}`
         }
     }
 
     fetchToken(code) {
         const data = {
             code: code,
-            client_id: this.client_id,
-            redirect_uri: this.redirect_uri,
-            client_secret: this.client_secret,
-            grant_type: 'authorization_code'
+            client_id: this.clientId,
+            redirect_uri: this.redirectUri,
+            client_secret: this.clientSecret,
+            grant_type: 'authorization_code',
+            code_verifier: 'challenge' // TODO: Update with standards
         }
         
         return axios({
             method: 'post',
             data: qs.stringify(data),
-            url: this.oauth_urls.ACCESS_TOKEN_URL,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
+            url: this.urls.ACCESS_TOKEN_URL,
+            headers: this.headers
         })
     }
 
     fetchRefreshToken(code) {
         const data = {
             refresh_token: code,
-            client_id: this.client_id,
-            client_secret: this.client_secret,
+            client_id: this.clientId,
+            client_secret: this.clientSecret,
             grant_type: 'refresh_token'
         }
         
         return axios({
             method: 'post',
             data: qs.stringify(data),
-            url: this.oauth_urls.ACCESS_TOKEN_URL,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
+            url: this.urls.ACCESS_TOKEN_URL,
+            headers: this.headers
         })
     }
 
     verifyToken(token) {
-        return axios({
-            method: 'get',
-            url: `${this.oauth_urls.VERIFICATION_TOKEN_URL}?input_token=${token}&access_token=${this.client_id}|${this.client_secret}`
+        return axios.get(this.urls.VERIFICATION_TOKEN_URL, {
+            params: {
+                input_token: token,
+                access_token: `${this.clientId}|${this.clientSecret}`
+            }
         })
     }
 }

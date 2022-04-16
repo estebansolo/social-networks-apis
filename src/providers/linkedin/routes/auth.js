@@ -15,7 +15,11 @@ router.get('/callback', (req, res) => {
     if(req.query.code) {
         auth.getAuthCode(req.query.code)
             .then(response => res.json(response.data))
-            .catch(error => res.status(HTTP_STATUS.UNAUTHORIZED).send(error.response.data))
+            .catch(error => {
+                res.status(HTTP_STATUS.UNAUTHORIZED).send({
+                    error: error.response.data.error_description
+                })
+            })
     } else {
         res.status(HTTP_STATUS.BAD_REQUEST).send({
             error: RESPONSES.MISSING_CALLBACK_CODE
@@ -25,11 +29,16 @@ router.get('/callback', (req, res) => {
 
 
 router.put('/refresh_token', (req, res) => {
-    const refresh_token = req.body.refresh_token ? req.body.refresh_token : null 
-    if(refresh_token) {
-        auth.getAuthCode(refresh_token, true)
+    const refreshToken = req.body.refresh_token ? req.body.refresh_token : null 
+    
+    if(refreshToken) {
+        auth.getAuthCode(refreshToken, true)
             .then(response => res.json(response.data))
-            .catch(error => res.status(HTTP_STATUS.UNAUTHORIZED).send(error.response.data))
+            .catch(error => {
+                res.status(HTTP_STATUS.UNAUTHORIZED).send({
+                    error: error.response.data.error_description
+                })
+            })
     } else {
         res.status(HTTP_STATUS.BAD_REQUEST).send({
             error: RESPONSES.MISSING_FIELDS_OR_WRONG_INPUTS

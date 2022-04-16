@@ -1,5 +1,5 @@
-import { FACEBOOK_URLS } from 'src/config/constants'
 import OAuthHelper from 'src/utilities/oauth_helper'
+import { FACEBOOK_URLS } from 'src/config/constants'
 
 
 class Auth {

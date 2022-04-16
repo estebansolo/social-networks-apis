@@ -17,12 +17,12 @@ class Auth {
         return this.oauth.authorizationUrl()
     }
 
-    async getAuthCode(code_or_token, refresh_token = false) {
-        if (refresh_token) {
-            return this.oauth.fetchRefreshToken(code_or_token)
+    getAuthCode(codeOrToken, isRefreshToken = false) {
+        if (isRefreshToken) {
+            return this.oauth.fetchRefreshToken(codeOrToken)
         }
 
-        return this.oauth.fetchToken(code_or_token)
+        return this.oauth.fetchToken(codeOrToken)
     }
 }
 

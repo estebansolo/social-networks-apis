@@ -3,14 +3,14 @@ import { LINKEDIN_URLS } from 'src/config/constants'
 
 
 class Api {
-    constructor() {
-        this.connections_url = `${LINKEDIN_URLS.CONNECTIONS_URL}/urn:li:person:`
-    }
+    constructor() {}
 
-    getLinkedInId(token) {
+    getBasicInfo(token) {
+        const url = `${LINKEDIN_URLS.API_URL}/me`
+
         return axios({
+            url,
             method: 'get',
-            url: LINKEDIN_URLS.ME_URL,
             headers: {
                 'Authorization': `Bearer ${token}` 
             }
@@ -19,13 +19,15 @@ class Api {
 
     async getConnections(token, linkedinId) {
         if(!linkedinId){
-            let linkedinId = await this.getLinkedInId(token)
-            linkedinId = linkedinId.data.id
+            let linkedinData = await this.getBasicInfo(token)
+            linkedinId = linkedinData.data.id
         }
 
+        const url = `${LINKEDIN_URLS.API_URL}/connections/urn:li:person:${linkedinId}`
+
         return axios({
+            url,
             method: 'get',
-            url: `${this.connections_url}${linkedinId}`,
             headers: {
                 "Authorization": `Bearer ${token}`
             }
