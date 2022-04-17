@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { FACEBOOK_URLS } from 'src/config/constants'
+import { FACEBOOK_URLS } from 'config/constants'
 
 
 class Api {

@@ -1,12 +1,12 @@
 import axios from 'axios'
-import { LINKEDIN_URLS } from 'src/config/constants'
+import { TWITTER_URLS } from 'config/constants'
 
 
 class Api {
     constructor() {}
 
     getBasicInfo(token) {
-        const url = `${LINKEDIN_URLS.API_URL}/me`
+        const url = `${TWITTER_URLS.API_URL}/users/me?user.fields=id,created_at,name,username,description`
 
         return axios({
             url,
@@ -17,13 +17,8 @@ class Api {
         })
     }
 
-    async getConnections(token, linkedinId) {
-        if(!linkedinId){
-            let linkedinData = await this.getBasicInfo(token)
-            linkedinId = linkedinData.data.id
-        }
-
-        const url = `${LINKEDIN_URLS.API_URL}/connections/urn:li:person:${linkedinId}`
+    async getPublicMetrics(token) {
+        const url = `${TWITTER_URLS.API_URL}/users/me?user.fields=public_metrics`
 
         return axios({
             url,

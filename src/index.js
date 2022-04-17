@@ -4,9 +4,10 @@ import bodyParser from 'body-parser'
 import swaggerUi  from 'swagger-ui-express'
 
 import swaggerDocument from 'swagger'
-import facebookRoute from 'facebook'
-import linkedinRoute from 'linkedin'
-import twitterRoute from 'twitter'
+import authRouter from 'auth/router'
+import facebookRouter from 'facebook/router'
+import linkedinRouter from 'linkedin/router'
+import twitterRouter from 'twitter/router'
 
 
 const app = express()
@@ -24,9 +25,10 @@ app.use(
     })
 )
 
-app.use("/facebook", facebookRoute)
-app.use("/linkedin", linkedinRoute)
-app.use("/twitter", twitterRoute)
+app.use("/auth", authRouter)
+app.use("/api/facebook", facebookRouter)
+app.use("/api/linkedin", linkedinRouter)
+app.use("/api/twitter", twitterRouter)
 
 
 app.listen(port, () => {

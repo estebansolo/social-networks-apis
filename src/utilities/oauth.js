@@ -1,25 +1,33 @@
 import qs from 'qs'
 import axios from 'axios'
-import { RESPONSES } from "src/config/constants";
+import { RESPONSES } from "config/constants";
 
 
-class OAuthHelper {
+class OAuth {
     /* Helper for OAuth V2 Applications */
+
+    complement = ''
     
-    constructor(scopes, clientId, redirectUri, clientSecret, urls, useAuthentication = false) {
+    headers = {
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+    
+    constructor(scopes, clientId, redirectUri, clientSecret, urls, useAuthentication = false, useComplement = false) {
         this.urls = urls
         this.scopes = scopes
         this.clientId = clientId
         this.redirectUri = redirectUri
         this.clientSecret = clientSecret
 
-        this.headers = {
-            "Content-Type": "application/x-www-form-urlencoded"
-        }
-
         if (useAuthentication){
             const authClient = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64');
             this.headers['Authorization'] = `Basic ${authClient}`
+        }
+
+        if (useComplement){
+            // TODO: Improve this according to the OAuth2 Standards
+            // https://www.oauth.com/oauth2-servers/pkce/authorization-request/
+            this.complement = '&state=state&code_challenge=challenge&code_challenge_method=plain'
         }
     }
 
@@ -33,12 +41,8 @@ class OAuthHelper {
         const scope = encodeURIComponent(this.scopes);
         const redirectUrl = encodeURIComponent(this.redirectUri)
 
-        // TODO: Improve this according to the OAuth2 Standards
-        // https://www.oauth.com/oauth2-servers/pkce/authorization-request/
-        const complement = 'state=state&code_challenge=challenge&code_challenge_method=plain'
-
         return {
-            'url': `${this.urls.AUTHORIZATION_URL}?response_type=code&client_id=${this.clientId}&redirect_uri=${redirectUrl}&scope=${scope}&${complement}`
+            'url': `${this.urls.AUTHORIZATION_URL}?response_type=code&client_id=${this.clientId}&redirect_uri=${redirectUrl}&scope=${scope}${this.complement}`
         }
     }
 
@@ -86,4 +90,4 @@ class OAuthHelper {
     }
 }
 
-export default OAuthHelper
+export default OAuth

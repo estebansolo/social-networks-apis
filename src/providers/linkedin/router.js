@@ -1,52 +1,38 @@
 import express from 'express'
-import Api from 'linkedin/services/api'
-import { HTTP_STATUS, RESPONSES } from "src/config/constants"
+import Api from 'linkedin/service'
+import { HTTP_STATUS, RESPONSES } from "config/constants"
+import { authToken } from "utilities/middlewares"
 
 
 const api = new Api();
 const router = express.Router()
 
 
-router.get('/me', (req, res) => {
-    const token = req.query.token ? req.query.token : null
-
-    if(token){
-        api.getBasicInfo(token).then(response => {
-            res.json(response.data)
-        }).catch(() => {
-            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
-                error: RESPONSES.API_ERROR
-            })
+router.get('/me', authToken, (req, res) => {
+    api.getBasicInfo(req.authToken).then(response => {
+        res.json(response.data)
+    }).catch(() => {
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
+            error: RESPONSES.API_ERROR
         })
-    } else {
-        res.status(HTTP_STATUS.BAD_REQUEST).send({
-            error: RESPONSES.AUTHENTICATION_TOKEN_REQUIRED
-        })
-    }
+    })
 })
 
 
-router.get('/connections', (req, res) => {
-    const token = req.query.token ? req.query.token : null
+router.get('/connections', authToken, (req, res) => {
     const linkedinId = req.query.linkedin_id ? req.query.linkedin_id : null
 
-    if(token){
-        api.getConnections(token, linkedinId).then(response => {
-            res.json(response.data)
-        }).catch(() => {
-            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
-                error: RESPONSES.API_ERROR
-            })
+    api.getConnections(req.authToken, linkedinId).then(response => {
+        res.json(response.data)
+    }).catch(() => {
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
+            error: RESPONSES.API_ERROR
         })
-    } else {
-        res.status(HTTP_STATUS.BAD_REQUEST).send({
-            error: RESPONSES.AUTHENTICATION_TOKEN_REQUIRED
-        })
-    }
+    })
 })
 
 
-router.post('/share', (req, res) => {
+router.post('/share', authToken, (req, res) => {
     // SHARE_URL: 'https://api.linkedin.com/v2/shares'
     app.post('/publish', async (req, res) => {
         const { title, text, url, thumb, id } = req.body;
