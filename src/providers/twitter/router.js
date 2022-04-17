@@ -30,4 +30,27 @@ router.get('/metrics', authToken, (req, res) => {
 })
 
 
+router.get('/tweet/:id', authToken, (req, res) => {
+    const tweetId = req.params.id
+    
+    api.getTweetLookup(tweetId, req.authToken).then(response => {
+        if ('errors' in response.data){
+            return Promise.reject(response.data.errors)
+        }
+
+        res.json(response.data.data)
+    }).catch((error) => {
+        if(typeof error === 'object'){
+            return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
+                error: 'message' in error ? error.message : error[0].detail
+            })
+        }
+
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
+            error: RESPONSES.API_ERROR
+        })
+    })
+})
+
+
 export default router
