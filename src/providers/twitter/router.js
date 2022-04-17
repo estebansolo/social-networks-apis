@@ -30,7 +30,7 @@ router.get('/metrics', authToken, (req, res) => {
 })
 
 
-router.get('/tweet/:id', authToken, (req, res) => {
+router.get('/tweets/:id', authToken, (req, res) => {
     const tweetId = req.params.id
     
     api.getTweetLookup(tweetId, req.authToken).then(response => {

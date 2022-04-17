@@ -32,43 +32,22 @@ router.get('/connections', authToken, (req, res) => {
 })
 
 
-router.post('/share', authToken, (req, res) => {
-    // SHARE_URL: 'https://api.linkedin.com/v2/shares'
-    app.post('/publish', async (req, res) => {
-        const { title, text, url, thumb, id } = req.body;
-        const errors = [];
+router.get('/posts/:id', authToken, (req, res) => {
+    const postId = req.params.id
     
-        if(validator.isEmpty(title)) {
-            errors.push({ param: 'title', msg: 'Invalid value.'});
+    api.getPostLookup(postId, req.authToken).then(response => {
+        res.json(response.data)
+    }).catch((error) => {
+        if(typeof error === 'object'){
+            return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
+                error: 'message' in error ? error.message : error
+            })
         }
-        if(validator.isEmpty(text)) {
-            errors.push({ param: 'text', msg: 'Invalid value.'});
-        }
-        if(!validator.isURL(url)) {
-            errors.push({ param: 'url', msg: 'Invalid value.'});
-        }
-        if(!validator.isURL(thumb)) {
-            errors.push({ param: 'thumb', msg: 'Invalid value.'});
-        }
-    
-        if(errors.length > 0) {
-            res.json({ errors });
-        } else {
-            const content = {
-                title: title,
-                text: text,
-                shareUrl: url,
-                shareThumbnailUrl: thumb
-            };
-    
-            try {
-                const response = await API.publishContent(req, id, content);
-                res.json({ success: 'Post published successfully.' });
-            } catch(err) {
-                res.json({ error: 'Unable to publish your post.' });
-            }
-        }
-    });
+
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
+            error: RESPONSES.API_ERROR
+        })
+    })
 })
 
 

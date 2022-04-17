@@ -33,6 +33,18 @@ class Api {
             }
         })
     }
+
+    getPostLookup(postId, token) {
+        const url = `${LINKEDIN_URLS.API_URL}/socialMetadata/urn:li:share:${postId}`
+
+        return axios({
+            url,
+            method: 'get',
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+    }
 }
 
 export default Api;
