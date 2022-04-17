@@ -31,5 +31,25 @@ router.get('/friends', authToken, (req, res) => {
     })
 })
 
+router.get('/posts/:id', authToken, (req, res) => {
+    const postId = req.params.id
+    
+    api.getPostLookup(postId, req.authToken).then(response => {
+        res.json(response.data)
+    }).catch((error) => {
+        if(error.response.data && typeof error.response.data === 'object'){
+            const errorData = error.response.data
+            
+            return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
+                error: 'message' in errorData.error ? errorData.error.message : error
+            })
+        }
+
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
+            error: RESPONSES.API_ERROR
+        })
+    })
+})
+
 
 export default router

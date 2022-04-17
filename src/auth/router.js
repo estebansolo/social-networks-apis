@@ -49,11 +49,12 @@ router.get('/:provider/verify_token', validateProvider(['FACEBOOK']), validateAu
     auth.setProvider(provider).verifyToken(req.query.token)
         .then(response => {
             response = response.data
+
             if (response.data.error){
                 return Promise.reject(response.data.error.message)
             }
             
-            res.json(response)
+            res.json(response.data)
         })
         .catch(error => {
             if(typeof error !== 'string'){
