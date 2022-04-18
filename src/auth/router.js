@@ -1,7 +1,7 @@
 import express from "express"
 import Auth from "auth/service"
 import { HTTP_STATUS, RESPONSES, VALID_PROVIDERS } from "config/constants"
-import { validateProvider, validateAuthField } from "utilities/middlewares"
+import { validateProvider, validateAuthField, authToken } from "utilities/middlewares"
 
 const auth = new Auth()
 const router = express.Router()
@@ -55,12 +55,12 @@ router.put(
 router.get(
     "/:provider/verify_token",
     validateProvider(["FACEBOOK"]),
-    validateAuthField,
+    authToken,
     (req, res) => {
         const provider = req.params.provider.toUpperCase()
 
         auth.setProvider(provider)
-            .verifyToken(req.query.token)
+            .verifyToken(req.authToken)
             .then(response => {
                 response = response.data
 

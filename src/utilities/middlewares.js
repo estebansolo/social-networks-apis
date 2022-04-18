@@ -35,15 +35,6 @@ export const validateAuthField = (req, res, next) => {
             }
 
             break
-
-        case "verify_token":
-            if (!req.query.token) {
-                return res.status(HTTP_STATUS.BAD_REQUEST).send({
-                    error: RESPONSES.AUTHENTICATION_TOKEN_REQUIRED
-                })
-            }
-
-            break
     }
 
     next()
