@@ -1,9 +1,8 @@
-import OAuth from 'utilities/oauth'
-import { TWITTER_URLS, FACEBOOK_URLS, LINKEDIN_URLS } from 'config/constants'
-
+import OAuth from "utilities/oauth"
+import { TWITTER_URLS, FACEBOOK_URLS, LINKEDIN_URLS } from "config/constants"
 
 export default {
-    'TWITTER': new OAuth(
+    TWITTER: new OAuth(
         process.env.TWITTER_SCOPES,
         process.env.TWITTER_CLIENT_ID,
         process.env.TWITTER_REDIRECT_URI,
@@ -12,7 +11,7 @@ export default {
         true,
         true
     ),
-    'FACEBOOK': new OAuth(
+    FACEBOOK: new OAuth(
         process.env.FACEBOOK_SCOPES,
         process.env.FACEBOOK_CLIENT_ID,
         process.env.FACEBOOK_REDIRECT_URI,
@@ -20,7 +19,7 @@ export default {
         FACEBOOK_URLS,
         false
     ),
-    'LINKEDIN': new OAuth(
+    LINKEDIN: new OAuth(
         process.env.LINKEDIN_SCOPES,
         process.env.LINKEDIN_CLIENT_ID,
         process.env.LINKEDIN_REDIRECT_URI,

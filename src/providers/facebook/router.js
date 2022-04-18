@@ -1,55 +1,51 @@
-import express from 'express'
-import Api from 'facebook/service'
+import express from "express"
+import Api from "facebook/service"
 import { HTTP_STATUS, RESPONSES } from "config/constants"
 import { authToken } from "utilities/middlewares"
 
-
-const api = new Api();
+const api = new Api()
 const router = express.Router()
 
+const errorHandler = res => {
+    return error => {
+        let errorData = null
 
-router.get('/me', authToken, (req, res) => {
-    api.getBasicInfo(req.authToken).then(response => {
-        res.json(response.data)
-    }).catch(() => {
-        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
-            error: RESPONSES.API_ERROR
-        })
-    })
-})
-
-
-router.get('/friends', authToken, (req, res) => {
-    const facebookId = req.query.facebook_id ? req.query.facebook_id : null
-
-    api.getFriends(req.authToken, facebookId).then(response => {
-        res.json(response.data)
-    }).catch(() => {
-        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
-            error: RESPONSES.API_ERROR
-        })
-    })
-})
-
-router.get('/posts/:id', authToken, (req, res) => {
-    const postId = req.params.id
-    
-    api.getPostLookup(postId, req.authToken).then(response => {
-        res.json(response.data)
-    }).catch((error) => {
-        if(error.response.data && typeof error.response.data === 'object'){
-            const errorData = error.response.data
-            
-            return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
-                error: 'message' in errorData.error ? errorData.error.message : error
-            })
+        if (
+            typeof error === "object" &&
+            "response" in error &&
+            error.response.data &&
+            "error" in error.response.data
+        ) {
+            errorData = error.response.data.error.message
         }
 
-        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
-            error: RESPONSES.API_ERROR
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
+            error: errorData ? errorData : RESPONSES.API_ERROR
         })
-    })
+    }
+}
+
+router.get("/me", authToken, (req, res) => {
+    api.getBasicInfo(req.authToken)
+        .then(response => res.json(response.data))
+        .catch(errorHandler(res))
 })
 
+router.get("/friends", authToken, (req, res) => {
+    const facebookId = req.query.facebook_id ? req.query.facebook_id : null
+
+    api.getFriends(req.authToken, facebookId)
+        .then(response => res.json(response))
+        .catch(errorHandler(res))
+})
+
+router.get("/posts/:id", authToken, (req, res) => {
+    const postId = req.params.id
+    const facebookId = req.query.facebook_id ? req.query.facebook_id : null
+
+    api.getPostLookup(postId, facebookId, req.authToken)
+        .then(response => res.json(response))
+        .catch(errorHandler(res))
+})
 
 export default router

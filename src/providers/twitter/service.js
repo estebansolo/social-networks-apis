@@ -1,56 +1,60 @@
-import axios from 'axios'
-import { TWITTER_URLS } from 'config/constants'
-
+import axios from "axios"
+import { TWITTER_URLS } from "config/constants"
+import { parseFriends, parsePostMetrics } from "utilities/parsers"
 
 class Api {
-    constructor() {}
-
     getBasicInfo(token) {
-        const url = `${TWITTER_URLS.API_URL}/users/me?user.fields=id,created_at,name,username,description`
+        const url = `${TWITTER_URLS.API_URL}/users/me`
 
-        return axios({
-            url,
-            method: 'get',
+        return axios.get(url, {
+            params: {
+                "user.fields": "id,created_at,name,username,description"
+            },
             headers: {
-                'Authorization': `Bearer ${token}` 
+                Authorization: `Bearer ${token}`
             }
         })
     }
 
     async getPublicMetrics(token) {
-        const url = `${TWITTER_URLS.API_URL}/users/me?user.fields=public_metrics`
+        const url = `${TWITTER_URLS.API_URL}/users/me`
 
-        return axios({
-            url,
-            method: 'get',
+        const response = await axios.get(url, {
+            params: {
+                "user.fields": "public_metrics"
+            },
             headers: {
-                "Authorization": `Bearer ${token}`
+                Authorization: `Bearer ${token}`
             }
         })
+
+        return parseFriends(response.data.data, "TWITTER")
     }
 
     async getTweetLookup(tweetId, token, isOlderThan30Days = false) {
         const url = `${TWITTER_URLS.API_URL}/tweets/${tweetId}`
-        const tweetFields = isOlderThan30Days ? "public_metrics" : "public_metrics,organic_metrics,non_public_metrics" 
 
-        const response = await axios({
-            url,
-            method: 'get',
+        const response = await axios.get(url, {
             params: {
-                "tweet.fields": tweetFields
+                "tweet.fields": isOlderThan30Days
+                    ? "public_metrics,author_id"
+                    : "public_metrics,author_id,organic_metrics,non_public_metrics"
             },
             headers: {
-                "Authorization": `Bearer ${token}`,
+                Authorization: `Bearer ${token}`,
                 "Content-type": "application/json"
             }
         })
 
-        if ("errors" in response.data && response.data.errors[0].detail.indexOf('older than 30 days') !== 1){
+        if (
+            "errors" in response.data &&
+            response.data.errors[0].detail.indexOf("older than 30 days") !== 1
+        ) {
             return this.getTweetLookup(tweetId, token, true)
         }
 
-        return response
+        return parsePostMetrics(response.data.data, "TWITTER")
     }
 }
 
-export default Api;
+export default Api

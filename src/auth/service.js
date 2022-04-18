@@ -1,10 +1,7 @@
-import authProviders from 'auth/authProviders'
-
+import authProviders from "auth/authProviders"
 
 class Auth {
-    constructor() {}
-
-    setProvider(provider){
+    setProvider(provider) {
         this.oauth = authProviders[provider]
         return this
     }
@@ -26,5 +23,4 @@ class Auth {
     }
 }
 
-
-export default Auth;
+export default Auth
