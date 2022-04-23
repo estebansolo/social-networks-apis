@@ -1,5 +1,5 @@
 import OAuth from "utilities/oauth"
-import { TWITTER_URLS, FACEBOOK_URLS, LINKEDIN_URLS } from "config/constants"
+import { TWITTER_URLS, FACEBOOK_URLS, LINKEDIN_URLS } from "src/config/constants"
 
 export default {
     TWITTER: new OAuth(

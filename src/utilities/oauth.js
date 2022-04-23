@@ -1,6 +1,6 @@
 import qs from "qs"
 import axios from "axios"
-import { RESPONSES } from "config/constants"
+import { RESPONSES } from "src/config/constants"
 
 class OAuth {
     /* Helper for OAuth V2 Applications */

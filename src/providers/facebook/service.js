@@ -1,5 +1,5 @@
 import axios from "axios"
-import { FACEBOOK_URLS, FACEBOOK_REACTIONS } from "config/constants"
+import { FACEBOOK_URLS, FACEBOOK_REACTIONS } from "src/config/constants"
 import { parseFriends, parsePostMetrics } from "utilities/parsers"
 
 class Api {

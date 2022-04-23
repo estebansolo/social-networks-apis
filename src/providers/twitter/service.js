@@ -1,5 +1,5 @@
 import axios from "axios"
-import { TWITTER_URLS } from "config/constants"
+import { TWITTER_URLS } from "src/config/constants"
 import { parseFriends, parsePostMetrics } from "utilities/parsers"
 
 class Api {

@@ -1,7 +1,7 @@
 import express from "express"
 import Api from "facebook/service"
-import { HTTP_STATUS, RESPONSES } from "config/constants"
-import { authToken } from "utilities/middlewares"
+import { HTTP_STATUS, RESPONSES } from "src/config/constants"
+import { authToken } from "src/utilities/middlewares"
 
 const api = new Api()
 const router = express.Router()

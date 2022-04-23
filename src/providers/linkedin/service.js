@@ -1,5 +1,5 @@
 import axios from "axios"
-import { LINKEDIN_URLS } from "config/constants"
+import { LINKEDIN_URLS } from "src/config/constants"
 import { parseFriends, parsePostMetrics } from "utilities/parsers"
 
 class Api {

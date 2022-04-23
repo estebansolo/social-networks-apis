@@ -1,7 +1,7 @@
 import express from "express"
 import Auth from "auth/service"
-import { HTTP_STATUS, RESPONSES, VALID_PROVIDERS } from "config/constants"
-import { validateProvider, validateAuthField, authToken } from "utilities/middlewares"
+import { HTTP_STATUS, RESPONSES, VALID_PROVIDERS } from "src/config/constants"
+import { validateProvider, validateAuthField, authToken } from "src/utilities/middlewares"
 
 const auth = new Auth()
 const router = express.Router()
