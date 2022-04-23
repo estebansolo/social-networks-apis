@@ -39,6 +39,15 @@ router.get("/friends", authToken, (req, res) => {
         .catch(errorHandler(res))
 })
 
+router.get("/posts", authToken, (req, res) => {
+    const facebookId = req.query.facebook_id
+    const followUrl = req.query.follow_url
+
+    api.getPosts(facebookId, req.authToken, followUrl)
+        .then(response => res.json(response.data))
+        .catch(errorHandler(res))
+})
+
 router.get("/posts/:id", authToken, (req, res) => {
     const postId = req.params.id
     const facebookId = req.query.facebook_id

@@ -52,6 +52,24 @@ class Api {
         return parsePostMetrics(responseData, "FACEBOOK")
     }
 
+    async getPosts(facebookId, token, followUrl = null) {
+        if (!followUrl){
+            if (!facebookId) {
+                let facebookData = await this.getBasicInfo(token)
+                facebookId = facebookData.data.id
+            }
+    
+            followUrl = `${FACEBOOK_URLS.API_URL}/${facebookId}/posts`
+        }
+
+        return axios.get(followUrl, {
+            params: {
+                access_token: token,
+                fields: `id,created_time,message,link,name,permalink_url,source,type`
+            }
+        })
+    }
+
     async reactionsByType(url, token) {
         const requests = []
 

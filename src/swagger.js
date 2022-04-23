@@ -710,6 +710,64 @@ export default {
         }
       }
     },
+    "/api/facebook/posts": {
+      "get": {
+        "tags": [
+          "facebook"
+        ],
+        "summary": "",
+        "description": "Get posts in descending order",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "description": "Token required to use the Facebook API",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "facebook_id",
+            "in": "query",
+            "description": "Facebook ID of the user to perform the action",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "follow_url",
+            "in": "query",
+            "description": "Paging URL that can be used to search next or previous posts",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Operation",
+            "schema": {
+              "$ref": "#/definitions/PostsList"
+            }
+          },
+          "400": {
+            "schema": {
+              "$ref": "#/definitions/SingleError"
+            }
+          },
+          "401": {
+            "schema": {
+              "$ref": "#/definitions/SingleError"
+            }
+          },
+          "500": {
+            "schema": {
+              "$ref": "#/definitions/SingleError"
+            }
+          }
+        }
+      }
+    },
     "/api/facebook/posts/{id}": {
       "get": {
         "tags": [
@@ -982,6 +1040,58 @@ export default {
           "type": "object",
           "example": "Here comes an object for Twitter API if the post is less than 30 days with more reach info"
         },
+      }
+    },
+    "PostsList": {
+      "type": "object",
+      "properties": {
+        "paging": {
+          "type": "object",
+          "$ref": "#/definitions/FacebookPaging"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FacebookPostsList"
+          }
+        }
+      }
+    },
+    "FacebookPostsList": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "created_time": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "link": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "permalink_url": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+      }
+    },
+    "FacebookPaging": {
+      "type": "object",
+      "properties": {
+        "previous": {
+          "type": "string"
+        },
+        "next": {
+          "type": "string"
+        }
       }
     }
   }

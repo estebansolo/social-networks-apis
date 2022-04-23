@@ -41,6 +41,7 @@ class Api {
 
         return parsePostMetrics(response.data, "LINKEDIN")
     }
+
 }
 
 export default Api

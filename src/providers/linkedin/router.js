@@ -43,4 +43,6 @@ router.get("/posts/:id", authToken, (req, res) => {
         .catch(errorHandler(res))
 })
 
+
+
 export default router
