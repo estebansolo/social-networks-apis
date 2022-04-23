@@ -28,7 +28,7 @@ router.get("/me", authToken, (req, res) => {
 })
 
 router.get("/connections", authToken, (req, res) => {
-    const linkedinId = req.query.linkedin_id ? req.query.linkedin_id : null
+    const linkedinId = req.query.linkedin_id
 
     api.getConnections(req.authToken, linkedinId)
         .then(response => res.json(response))

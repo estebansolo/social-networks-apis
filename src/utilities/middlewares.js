@@ -42,13 +42,12 @@ export const validateAuthField = (req, res, next) => {
 
 export const authToken = (req, res, next) => {
     // TODO: Change using header
-    const token = req.query.token ? req.query.token : null
-    if (!token) {
+    if (!req.query.token) {
         return res.status(HTTP_STATUS.BAD_REQUEST).send({
             error: RESPONSES.AUTHENTICATION_TOKEN_REQUIRED
         })
     }
 
-    req.authToken = token
+    req.authToken = req.query.token
     next()
 }

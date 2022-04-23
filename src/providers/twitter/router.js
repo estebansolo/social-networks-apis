@@ -19,7 +19,7 @@ const errorHandler = res => {
         }
 
         return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
-            error: errorData ? errorData : RESPONSES.API_ERROR
+            error: errorData || RESPONSES.API_ERROR
         })
     }
 }

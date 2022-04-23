@@ -20,7 +20,7 @@ const errorHandler = res => {
         }
 
         return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).send({
-            error: errorData ? errorData : RESPONSES.API_ERROR
+            error: errorData || RESPONSES.API_ERROR
         })
     }
 }
@@ -32,7 +32,7 @@ router.get("/me", authToken, (req, res) => {
 })
 
 router.get("/friends", authToken, (req, res) => {
-    const facebookId = req.query.facebook_id ? req.query.facebook_id : null
+    const facebookId = req.query.facebook_id
 
     api.getFriends(req.authToken, facebookId)
         .then(response => res.json(response))
@@ -41,7 +41,7 @@ router.get("/friends", authToken, (req, res) => {
 
 router.get("/posts/:id", authToken, (req, res) => {
     const postId = req.params.id
-    const facebookId = req.query.facebook_id ? req.query.facebook_id : null
+    const facebookId = req.query.facebook_id
 
     api.getPostLookup(postId, facebookId, req.authToken)
         .then(response => res.json(response))

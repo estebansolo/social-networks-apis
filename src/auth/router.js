@@ -23,9 +23,7 @@ router.get(
             .then(response => res.json(response.data))
             .catch(error => {
                 const data = error.response.data
-                const message = data.error_description
-                    ? data.error_description
-                    : data.error.message
+                const message = data.error_description || data.error.message
 
                 res.status(HTTP_STATUS.UNAUTHORIZED).send({
                     error: message
