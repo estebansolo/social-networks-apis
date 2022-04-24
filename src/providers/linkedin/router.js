@@ -43,6 +43,30 @@ router.get("/posts/:id", authToken, (req, res) => {
         .catch(errorHandler(res))
 })
 
+router.post("/posts", authToken, (req, res) => {
+    const linkedinId = req.query.linkedin_id
+
+    const body = {
+        message: "Hello World", // String. Max 3000
+        mentions: [
+            {
+                "entity": "urn:li:organization:2414183",
+                "length": 9,
+                "start": 6
+            }
+        ],
+        entities: [
+            {
+                "entity": ""
+            }
+        ] //https://docs.microsoft.com/en-us/linkedin/marketing/integrations/community-management/shares/vector-asset-api?tabs=http
+    }
+
+    api.createPost(req.authToken, linkedinId)
+        .then(response => res.json(response.data))
+        .catch(errorHandler(res))
+})
+
 
 
 export default router

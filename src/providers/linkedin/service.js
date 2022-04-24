@@ -42,6 +42,37 @@ class Api {
         return parsePostMetrics(response.data, "LINKEDIN")
     }
 
+    async createPost(data, token, linkedinId) {
+        if (!linkedinId) {
+            let linkedinData = await this.getBasicInfo(token)
+            linkedinId = linkedinData.data.id
+        }
+    
+        const url = `${LINKEDIN_URLS.API_URL}/shares`
+        
+        const content = {
+            "owner": `urn:li:person:${linkedinId}`,
+            "distribution": {
+                "linkedInDistributionTarget": {
+                    "connectionsOnly": false
+                }
+            },
+            "content": {
+                "contentEntities": data.entities
+            },
+            "text": {
+                "text": data.message,
+                "annotations": data.mentions
+            }
+        }
+
+        return axios.post(url, content, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        })
+    }
 }
 
 export default Api

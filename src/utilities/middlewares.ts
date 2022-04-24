@@ -1,6 +1,6 @@
 import { HTTP_STATUS, RESPONSES } from "../config/constants"
 
-export let validateProvider = (providers: string[]) => {
+export const validateProvider = (providers: string[]) => {
     return (req: any, res: any, next: any) => {
         const provider = req.params.provider.toUpperCase()
 
@@ -14,7 +14,7 @@ export let validateProvider = (providers: string[]) => {
     }
 }
 
-export let validateAuthField = (req: any, res: any, next: any) => {
+export const validateAuthField = (req: any, res: any, next: any) => {
     const urlPath = req.path.split("/")
 
     switch (urlPath[urlPath.length - 1]) {
@@ -40,7 +40,7 @@ export let validateAuthField = (req: any, res: any, next: any) => {
     next()
 }
 
-export let authToken = (req: any, res: any, next: any) => {
+export const authToken = (req: any, res: any, next: any) => {
     // TODO: Change using header
     if (!req.query.token) {
         return res.status(HTTP_STATUS.BAD_REQUEST).send({
