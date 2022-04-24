@@ -4,7 +4,8 @@ import bodyParser from "body-parser"
 import swaggerUi from "swagger-ui-express"
 
 import swaggerDocument from "swagger"
-import authRouter from "auth/router"
+import v1Auth from "auth/v1/router"
+import v2Auth from "auth/v2/router"
 import facebookRouter from "facebook/router"
 import linkedinRouter from "linkedin/router"
 import twitterRouter from "twitter/router"
@@ -23,7 +24,8 @@ app.use(
     })
 )
 
-app.use("/auth", authRouter)
+app.use("/auth/v1", v1Auth)
+app.use("/auth/v2", v2Auth)
 app.use("/api/facebook", facebookRouter)
 app.use("/api/linkedin", linkedinRouter)
 app.use("/api/twitter", twitterRouter)

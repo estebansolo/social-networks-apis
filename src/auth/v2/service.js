@@ -1,4 +1,4 @@
-import authProviders from "auth/authProviders"
+import authProviders from "auth/v2/authProviders"
 
 class Auth {
     setProvider(provider) {
