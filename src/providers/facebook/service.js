@@ -74,7 +74,6 @@ class Api {
         const requests = []
 
         for (const reaction in FacebookReaction) {
-            console.log(reaction)
             const reactionRequest = await axios
                 .get(url, {
                     params: {

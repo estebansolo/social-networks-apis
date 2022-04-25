@@ -1,10 +1,10 @@
 import axios from "axios"
-import { TWITTER_URLS } from "src/config/constants"
+import { TWITTER_URLS, Provider } from "src/config/constants"
 import { parseFriends, parsePostMetrics } from "utilities/parsers"
 
 class Api {
-    getBasicInfo(token) {
-        const url = `${TWITTER_URLS.API_URL}/users/me`
+    static getBasicInfo(token) {
+        const url = `${TWITTER_URLS.V2.API_URL}/users/me`
 
         return axios.get(url, {
             params: {
@@ -16,8 +16,8 @@ class Api {
         })
     }
 
-    async getPublicMetrics(token) {
-        const url = `${TWITTER_URLS.API_URL}/users/me`
+    static async getPublicMetrics(token) {
+        const url = `${TWITTER_URLS.V2.API_URL}/users/me`
 
         const response = await axios.get(url, {
             params: {
@@ -28,11 +28,11 @@ class Api {
             }
         })
 
-        return parseFriends(response.data.data, "TWITTER")
+        return parseFriends(response.data.data, Provider.TWITTER)
     }
 
-    async getTweetLookup(tweetId, token, isOlderThan30Days = false) {
-        const url = `${TWITTER_URLS.API_URL}/tweets/${tweetId}`
+    static async getTweetLookup(tweetId, token, isOlderThan30Days = false) {
+        const url = `${TWITTER_URLS.V2.API_URL}/tweets/${tweetId}`
 
         const response = await axios.get(url, {
             params: {
@@ -53,7 +53,7 @@ class Api {
             return this.getTweetLookup(tweetId, token, true)
         }
 
-        return parsePostMetrics(response.data.data, "TWITTER")
+        return parsePostMetrics(response.data.data, Provider.TWITTER)
     }
 }
 

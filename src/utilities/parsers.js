@@ -1,3 +1,5 @@
+import { Provider } from "src/config/constants"
+
 export const parseFriends = (data, provider) => {
     const friendsData = {
         count: null,
@@ -6,16 +8,16 @@ export const parseFriends = (data, provider) => {
     }
 
     switch (provider) {
-        case "TWITTER":
+        case Provider.TWITTER:
             friendsData.followers = data.public_metrics.followers_count
             friendsData.following = data.public_metrics.following_count
             break
 
-        case "FACEBOOK":
+        case Provider.FACEBOOK:
             friendsData.count = data.summary.total_count
             break
 
-        case "LINKEDIN":
+        case Provider.LINKEDIN:
             friendsData.count = data.firstDegreeSize
             break
     }
@@ -35,7 +37,7 @@ export const parsePostMetrics = (data, provider) => {
     }
 
     switch (provider) {
-        case "TWITTER":
+        case Provider.TWITTER:
             metricsData.id = data.id
             metricsData.url = `https://twitter.com/${data.author_id}/status/${data.id}`
             metricsData.likes = data.public_metrics.like_count
@@ -46,7 +48,7 @@ export const parsePostMetrics = (data, provider) => {
             metricsData.extra.non_public_metrics = data.non_public_metrics
             break
 
-        case "FACEBOOK":
+        case Provider.FACEBOOK:
             metricsData.id = data.id
             metricsData.url = data.permalink_url
             metricsData.shares = data.shares ? data.shares.count : 0
@@ -59,7 +61,7 @@ export const parsePostMetrics = (data, provider) => {
             }
             break
 
-        case "LINKEDIN":
+        case Provider.LINKEDIN:
             metricsData.id = data.entity
             metricsData.comments = data.commentSummary.count
             metricsData.url = `https://www.linkedin.com/feed/update/${data.entity}`

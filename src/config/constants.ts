@@ -2,9 +2,9 @@ export const TWITTER_URLS = {
     V1: {
         REQUEST_TOKEN_URL: "https://twitter.com/oauth/request_token",
         ACCESS_TOKEN_URL: "https://twitter.com/oauth/access_token",
-        VERIFICATION_TOKEN_URL:
-            "https://api.twitter.com/1.1/account/verify_credentials.json",
-        AUTHENTICATE_URL: "https://twitter.com/oauth/authenticate?oauth_token="
+        VERIFICATION_TOKEN_URL: "https://api.twitter.com/1.1/account/verify_credentials.json",
+        AUTHENTICATE_URL: "https://twitter.com/oauth/authenticate?oauth_token=",
+        TWEET_LOOKUP: 'https://api.twitter.com/1.1/statuses/show.json'
     },
     V2: {
         AUTHORIZATION_URL: "https://twitter.com/i/oauth2/authorize",

@@ -5,7 +5,8 @@ import swaggerUi from "swagger-ui-express"
 
 import v1Auth from "auth/v1"
 import v2Auth from "auth/v2"
-import twitter from "twitter"
+import v1Twitter from "twitter/v1"
+import v2Twitter from "twitter/v2"
 import facebook from "facebook"
 import linkedin from "linkedin"
 import swaggerDocument from "swagger"
@@ -27,9 +28,10 @@ app.use(
 
 app.use("/auth/v1", v1Auth)
 app.use("/auth/v2", v2Auth)
-app.use("/api/twitter", twitter)
 app.use("/api/facebook", facebook)
 app.use("/api/linkedin", linkedin)
+app.use("/api/twitter/v1", v1Twitter)
+app.use("/api/twitter/v2", v2Twitter)
 
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`)

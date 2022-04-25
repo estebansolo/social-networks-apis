@@ -9,17 +9,14 @@ const errorHandler = res => {
     return error => {
         let errorData = null
 
-        if (
-            typeof error === "object" &&
-            "response" in error &&
-            error.response.data &&
-            "error" in error.response.data
-        ) {
+        try {
             errorData = error.response.data.error.message
+        } catch (error) {
+            errorData = 'There was an unexpected error with the API'
         }
 
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-            error: errorData || 'There was an unexpected error with the API'
+            errors: [errorData]
         })
     }
 }
