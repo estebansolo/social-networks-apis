@@ -1,9 +1,9 @@
 import axios from "axios"
-import { FACEBOOK_URLS, FACEBOOK_REACTIONS } from "src/config/constants"
+import { FACEBOOK_URLS, FacebookReaction, Provider } from "src/config/constants"
 import { parseFriends, parsePostMetrics } from "utilities/parsers"
 
 class Api {
-    getBasicInfo(token) {
+    static getBasicInfo(token) {
         const url = `${FACEBOOK_URLS.API_URL}/me`
 
         return axios.get(url, {
@@ -14,7 +14,7 @@ class Api {
         })
     }
 
-    async getFriends(token, facebookId) {
+    static async getFriends(token, facebookId) {
         if (!facebookId) {
             let facebookData = await this.getBasicInfo(token)
             facebookId = facebookData.data.id
@@ -28,31 +28,10 @@ class Api {
             }
         })
 
-        return parseFriends(response.data, "FACEBOOK")
+        return parseFriends(response.data, Provider.FACEBOOK)
     }
 
-    async getPostLookup(postId, facebookId, token) {
-        if (!facebookId) {
-            let facebookData = await this.getBasicInfo(token)
-            facebookId = facebookData.data.id
-        }
-
-        const url = `${FACEBOOK_URLS.API_URL}/${facebookId}_${postId}`
-
-        const response = await axios.get(url, {
-            params: {
-                access_token: token,
-                fields: `id,message,permalink_url,created_time,comments.limit(0).summary(total_count),shares`
-            }
-        })
-
-        const responseData = response.data
-        responseData.reactions = await this.reactionsByType(url, token)
-
-        return parsePostMetrics(responseData, "FACEBOOK")
-    }
-
-    async getPosts(facebookId, token, followUrl = null) {
+    static async getPosts(facebookId, token, followUrl = null) {
         if (!followUrl){
             if (!facebookId) {
                 let facebookData = await this.getBasicInfo(token)
@@ -70,20 +49,42 @@ class Api {
         })
     }
 
-    async reactionsByType(url, token) {
+    static async getPostLookup(postId, facebookId, token) {
+        if (!facebookId) {
+            let facebookData = await this.getBasicInfo(token)
+            facebookId = facebookData.data.id
+        }
+
+        const url = `${FACEBOOK_URLS.API_URL}/${facebookId}_${postId}`
+
+        const response = await axios.get(url, {
+            params: {
+                access_token: token,
+                fields: `id,message,permalink_url,created_time,comments.limit(0).summary(total_count),shares`
+            }
+        })
+
+        const responseData = response.data
+        responseData.reactions = await this.reactionsByType(url, token)
+
+        return parsePostMetrics(responseData, Provider.FACEBOOK)
+    }
+
+    static async reactionsByType(url, token) {
         const requests = []
 
-        for (const reaction in FACEBOOK_REACTIONS) {
+        for (const reaction in FacebookReaction) {
+            console.log(reaction)
             const reactionRequest = await axios
                 .get(url, {
                     params: {
                         access_token: token,
-                        fields: `reactions.limit(0).type(${FACEBOOK_REACTIONS[reaction]}).summary(total_count)`
+                        fields: `reactions.limit(0).type(${reaction}).summary(total_count)`
                     }
                 })
                 .then(response => {
                     return {
-                        reaction: FACEBOOK_REACTIONS[reaction],
+                        reaction: reaction,
                         total: response.data.reactions.summary.total_count
                     }
                 })

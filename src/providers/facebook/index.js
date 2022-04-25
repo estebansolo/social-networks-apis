@@ -3,7 +3,6 @@ import Api from "facebook/service"
 import { HttpStatus } from "src/config/constants"
 import { authToken } from "src/utilities/middlewares"
 
-const api = new Api()
 const router = express.Router()
 
 const errorHandler = res => {
@@ -26,7 +25,7 @@ const errorHandler = res => {
 }
 
 router.get("/me", authToken, (req, res) => {
-    api.getBasicInfo(req.authorization)
+    Api.getBasicInfo(req.authorization)
         .then(response => res.json(response.data))
         .catch(errorHandler(res))
 })
@@ -34,7 +33,7 @@ router.get("/me", authToken, (req, res) => {
 router.get("/friends", authToken, (req, res) => {
     const facebookId = req.query.facebook_id
 
-    api.getFriends(req.authorization, facebookId)
+    Api.getFriends(req.authorization, facebookId)
         .then(response => res.json(response))
         .catch(errorHandler(res))
 })
@@ -43,7 +42,7 @@ router.get("/posts", authToken, (req, res) => {
     const facebookId = req.query.facebook_id
     const followUrl = req.query.follow_url
 
-    api.getPosts(facebookId, req.authorization, followUrl)
+    Api.getPosts(facebookId, req.authorization, followUrl)
         .then(response => res.json(response.data))
         .catch(errorHandler(res))
 })
@@ -52,7 +51,7 @@ router.get("/posts/:id", authToken, (req, res) => {
     const postId = req.params.id
     const facebookId = req.query.facebook_id
 
-    api.getPostLookup(postId, facebookId, req.authorization)
+    Api.getPostLookup(postId, facebookId, req.authorization)
         .then(response => res.json(response))
         .catch(errorHandler(res))
 })

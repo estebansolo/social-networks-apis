@@ -39,7 +39,7 @@ export enum HttpStatus {
     INTERNAL_SERVER_ERROR = 500
 }
 
-export enum FacebookReactions {
+export enum FacebookReaction {
     LIKE = "LIKE",
     LOVE = "LOVE",
     WOW = "WOW",
