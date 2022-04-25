@@ -1,27 +1,54 @@
-import { HTTP_STATUS, RESPONSES } from "../config/constants"
+import { HttpStatus } from "../config/constants"
 
 export const validateProvider = (providers: string[]) => {
     return (req: any, res: any, next: any) => {
-        const provider = req.params.provider.toUpperCase()
+        const errors = []
+        const provider: string = req.query.provider
+            ? req.query.provider.toUpperCase()
+            : ""
 
-        if (providers.indexOf(provider) === -1) {
-            return res.status(HTTP_STATUS.BAD_REQUEST).send({
-                error: RESPONSES.INVALID_PROVIDER
-            })
+        if (!provider) {
+            errors.push("Header provider is required")
+        }
+
+        if (provider != "" && providers.indexOf(provider) === -1) {
+            errors.push("Header provider is not valid")
+        }
+
+        if (errors.length > 0) {
+            return res.status(HttpStatus.BAD_REQUEST).send({ errors })
         }
 
         next()
     }
 }
 
-export const validateAuthField = (req: any, res: any, next: any) => {
+export const validateAuthFields = (req: any, res: any, next: any) => {
+    if (
+        !req.headers.client_id ||
+        !req.headers.client_secret ||
+        !req.query.redirect_uri
+    ) {
+        return res.status(HttpStatus.BAD_REQUEST).send({
+            errors: [
+                "Authentication values required client_id, client_secret, and redirect_uri"
+            ]
+        })
+    }
+
+    next()
+}
+
+export const validateTokenOrCode = (req: any, res: any, next: any) => {
     const urlPath = req.path.split("/")
 
     switch (urlPath[urlPath.length - 1]) {
         case "callback":
             if (!req.query.code) {
-                return res.status(HTTP_STATUS.BAD_REQUEST).send({
-                    error: RESPONSES.MISSING_CALLBACK_CODE
+                return res.status(HttpStatus.BAD_REQUEST).send({
+                    errors: [
+                        "code parameter is required to perform the authentication operation"
+                    ]
                 })
             }
 
@@ -29,8 +56,8 @@ export const validateAuthField = (req: any, res: any, next: any) => {
 
         case "refresh_token":
             if (!req.body.refresh_token) {
-                return res.status(HTTP_STATUS.BAD_REQUEST).send({
-                    error: RESPONSES.MISSING_FIELDS_OR_WRONG_INPUTS
+                return res.status(HttpStatus.BAD_REQUEST).send({
+                    errors: ["refresh_token parameter is required"]
                 })
             }
 
@@ -41,13 +68,12 @@ export const validateAuthField = (req: any, res: any, next: any) => {
 }
 
 export const authToken = (req: any, res: any, next: any) => {
-    // TODO: Change using header
-    if (!req.query.token) {
-        return res.status(HTTP_STATUS.BAD_REQUEST).send({
-            error: RESPONSES.AUTHENTICATION_TOKEN_REQUIRED
+    if (!req.headers.authorization) {
+        return res.status(HttpStatus.BAD_REQUEST).send({
+            errors: ["Authorization token is required to use the API"]
         })
     }
 
-    req.authToken = req.query.token
+    req.authorization = req.headers.authorization
     next()
 }

@@ -1,25 +1,24 @@
-import authProviders from "auth/v2/authProviders"
+import OAuthService from "auth/v2/oauthService"
 
 class Auth {
-    setProvider(provider) {
-        this.oauth = authProviders[provider]
-        return this
+    static getUrl(provider, authData) {
+        const oauthService = OAuthService.init(provider, authData)
+        return oauthService.authorizationUrl()
     }
 
-    getUrl() {
-        return this.oauth.authorizationUrl()
-    }
+    static getAuthCode(provider, authData) {
+        const oauthService = OAuthService.init(provider, authData)
 
-    getAuthCode(codeOrToken, isRefreshToken = false) {
-        if (isRefreshToken) {
-            return this.oauth.fetchRefreshToken(codeOrToken)
+        if (authData.token !== undefined) {
+            return oauthService.fetchRefreshToken(authData.token)
         }
 
-        return this.oauth.fetchToken(codeOrToken)
+        return oauthService.fetchToken(authData.code)
     }
 
-    verifyToken(token) {
-        return this.oauth.verifyToken(token)
+    static verifyToken(provider, authData) {
+        const oauthService = OAuthService.init(provider, authData)
+        return oauthService.verifyToken(authData.token)
     }
 }
 

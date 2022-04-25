@@ -1,8 +1,10 @@
 import qs from "qs"
 import axios from "axios"
-import { RESPONSES } from "src/config/constants"
+import { Provider } from "src/config/constants"
+import { TWITTER_URLS, FACEBOOK_URLS, LINKEDIN_URLS } from "src/config/constants"
 
-class OAuth {
+
+class OAuthService {
     /* Helper for OAuth V2 Applications */
 
     complement = ""
@@ -41,18 +43,42 @@ class OAuth {
         }
     }
 
-    authorizationUrl() {
-        if (
-            !this.scopes ||
-            !this.clientId ||
-            !this.redirectUri ||
-            !this.clientSecret
-        ) {
-            return {
-                error: RESPONSES.MISSING_API_FIELDS
-            }
+    static init(provider, authData){
+        const oauthScopes = OAuthService.providerScopes(provider)
+        const oauthServiceUrls = OAuthService.providerUrls(provider)
+
+        return new OAuthService(
+            oauthScopes,
+            authData.clientId,
+            authData.redirectUri,
+            authData.clientSecret,
+            oauthServiceUrls,
+            provider == Provider.TWITTER,
+            provider == Provider.TWITTER
+        )
+    }
+
+    static providerUrls(provider){
+        const dataProviders = {
+            FACEBOOK: FACEBOOK_URLS,
+            LINKEDIN: LINKEDIN_URLS,
+            TWITTER: TWITTER_URLS.V2
         }
 
+        return dataProviders[provider]
+    }
+
+    static providerScopes(provider){
+        const dataProviders = {
+            TWITTER: process.env.TWITTER_SCOPES,
+            FACEBOOK: process.env.FACEBOOK_SCOPES,
+            LINKEDIN: process.env.LINKEDIN_SCOPES
+        }
+
+        return dataProviders[provider]
+    }
+
+    authorizationUrl() {
         const scope = encodeURIComponent(this.scopes)
         const redirectUrl = encodeURIComponent(this.redirectUri)
 
@@ -105,4 +131,4 @@ class OAuth {
     }
 }
 
-export default OAuth
+export default OAuthService
