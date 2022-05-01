@@ -76,3 +76,14 @@ export const parsePostMetrics = (data, provider) => {
 
     return metricsData
 }
+
+export const queryParamsSerializer = (obj) => {
+    const query = []
+    for (const param in obj) {
+        if (obj.hasOwnProperty(param)) {
+            query.push(`${encodeURIComponent(param)}=${encodeURIComponent(obj[param])}`)
+        }
+    }
+      
+    return query.join("&")
+}

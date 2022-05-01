@@ -7,20 +7,13 @@ const router = express.Router()
 
 const errorHandler = res => {
     return error => {
-        if (typeof error.response.data === "object") {
-            const errorData = error.response.data
-            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-                errors: [
-                    "message" in errorData ? errorData.message : errorData
-                ]
-            })
+        let errorData = error.toString()
+        if('response' in error && typeof error.response.data === "object"){
+            errorData = error.response.data
+            errorData = "message" in errorData ? errorData.message : errorData
         }
 
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({
-            errors: [
-                'There was an unexpected error with the API'
-            ]
-        })
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({errors: [errorData]})
     }
 }
 
@@ -47,29 +40,43 @@ router.get("/posts/:id", authToken, (req, res) => {
 })
 
 router.post("/posts", authToken, (req, res) => {
-    const linkedinId = req.query.linkedin_id
-
-    const body = {
-        message: "Hello World", // String. Max 3000
-        mentions: [
-            {
-                "entity": "urn:li:organization:2414183",
-                "length": 9,
-                "start": 6
-            }
-        ],
-        entities: [
-            {
-                "entity": ""
-            }
-        ] //https://docs.microsoft.com/en-us/linkedin/marketing/integrations/community-management/shares/vector-asset-api?tabs=http
+    const data = {
+        message: req.body.message || '',
+        mediaIds: req.body.media_ids || [],
+        mediaCategory: req.body.media_category || 'NONE',
+        linkedinId: req.query.linkedin_id
     }
 
-    Api.createPost(req.authorization, linkedinId)
-        .then(response => res.json(response.data))
+    if (data.message === '' && data.mediaIds.length == 0){
+        res.status(HttpStatus.BAD_REQUEST).send({errors: ["We require message or media ids to publish"]})
+    }
+
+    Api.createPost(data, req.authorization)
+        .then(response => res.json(response))
         .catch(errorHandler(res))
 })
 
+router.get("/upload", authToken, (req, res) => {
+    Api.validateMedia(req.query.asset_id, req.authorization)
+        .then(response => res.json(response))
+        .catch(errorHandler(res))
+})
 
+router.post("/upload", authToken, (req, res) => {
+    if(!req.files || !('file' in req.files)){
+        return res.status(HttpStatus.BAD_REQUEST).send({errors: ['No file uploaded']})
+    }
+    
+    const data = {
+        data: req.files.file.data,
+        size: req.files.file.size,
+        mimeType: req.files.file.mimetype,
+        linkedinId: req.query.linkedin_id
+    }
+    
+    Api.uploadMedia(data, req.authorization)
+        .then(response => res.json(response))
+        .catch(errorHandler(res))
+})
 
 export default router

@@ -4,7 +4,9 @@ export const TWITTER_URLS = {
         ACCESS_TOKEN_URL: "https://twitter.com/oauth/access_token",
         VERIFICATION_TOKEN_URL: "https://api.twitter.com/1.1/account/verify_credentials.json",
         AUTHENTICATE_URL: "https://twitter.com/oauth/authenticate?oauth_token=",
-        TWEET_LOOKUP: 'https://api.twitter.com/1.1/statuses/show.json'
+        TWEET_LOOKUP: 'https://api.twitter.com/1.1/statuses/show.json',
+        TWEET_CREATE: 'https://api.twitter.com/1.1/statuses/update.json',
+        MEDIA_UPLOAD: 'https://upload.twitter.com/1.1/media/upload.json'
     },
     V2: {
         AUTHORIZATION_URL: "https://twitter.com/i/oauth2/authorize",
@@ -48,3 +50,5 @@ export enum FacebookReaction {
     SAD = "SAD",
     ANGRY = "ANGRY"
 }
+
+export const TWITTER_CHUNK_SIZE = 1084576

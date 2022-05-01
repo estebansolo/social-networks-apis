@@ -1,7 +1,8 @@
 import axios from "axios"
+import Media from "twitter/v1/media"
 import OAuthService from "auth/v1/oauthService"
-import { TWITTER_URLS, Provider } from "src/config/constants"
-import { parseFriends, parsePostMetrics } from "utilities/parsers"
+import { Provider } from "src/config/constants"
+import { parseFriends, parsePostMetrics, queryParamsSerializer } from "utilities/parsers"
 
 class Api {
     static getBasicInfo(authData) {
@@ -10,12 +11,12 @@ class Api {
         
         return new Promise((resolve, reject) => {
             oauthService.get(
-                TWITTER_URLS.V1.VERIFICATION_TOKEN_URL,
+                oauthServiceUrls.VERIFICATION_TOKEN_URL,
                 authData.accessToken,
                 authData.accessTokenSecret,
                 (error, data, results) => {                    
                     if (error) {
-                        reject(error)
+                        return reject(error)
                     }
                     
                     const response = JSON.parse(data)
@@ -38,12 +39,12 @@ class Api {
         
         return new Promise((resolve, reject) => {
             oauthService.get(
-                TWITTER_URLS.V1.VERIFICATION_TOKEN_URL,
+                oauthServiceUrls.VERIFICATION_TOKEN_URL,
                 authData.accessToken,
                 authData.accessTokenSecret,
                 (error, data, results) => {                    
                     if (error) {
-                        reject(error)
+                        return reject(error)
                     }
                     
                     const response = JSON.parse(data)
@@ -64,12 +65,12 @@ class Api {
         
         return new Promise((resolve, reject) => {
             oauthService.get(
-                `${TWITTER_URLS.V1.TWEET_LOOKUP}?id=${tweetId}`,
+                `${oauthServiceUrls.TWEET_LOOKUP}?id=${tweetId}`,
                 authData.accessToken,
                 authData.accessTokenSecret,
                 (error, data, results) => {                    
                     if (error) {
-                        reject(error)
+                        return reject(error)
                     }
                     
                     const response = JSON.parse(data)
@@ -86,6 +87,46 @@ class Api {
                 }
             )
         })
+    }
+
+    static async createPost(data, authData) {
+        const oauthService = OAuthService.init(Provider.TWITTER, authData)
+        const oauthServiceUrls = OAuthService.providerUrls(Provider.TWITTER)
+
+        const parameters = queryParamsSerializer({
+            trim_user: true,
+            status: data.message,
+            media_ids: data.mediaIds.join(',')
+        })
+        
+        return new Promise((resolve, reject) => {
+            oauthService.post(
+                `${oauthServiceUrls.TWEET_CREATE}?${parameters}`,
+                authData.accessToken,
+                authData.accessTokenSecret, null, null,
+                (error, data, results) => {
+                    if (error) {
+                        return reject(error)
+                    }
+                    
+                    const response = JSON.parse(data)
+                    if ('errors' in response){
+                        return reject(data)
+                    }
+                    
+                    resolve({
+                        id: response.id,
+                        created_at: response.created_at,
+                        url: `https://twitter.com/${response.user.id}/status/${response.id}`
+                    })
+                }
+            )
+        })
+    }
+
+    static async uploadMedia(data, authData) {
+        const media = new Media(authData)
+        media.upload(data)
     }
 }
 
