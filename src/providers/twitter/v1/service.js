@@ -126,7 +126,7 @@ class Api {
 
     static async uploadMedia(data, authData) {
         const media = new Media(authData)
-        media.upload(data)
+        return await media.upload(data)
     }
 }
 

@@ -1,3 +1,4 @@
+import axios from "axios"
 import express from "express"
 import Api from "twitter/v1/service"
 import { HttpStatus } from "src/config/constants"
@@ -20,6 +21,26 @@ const errorHandler = error => {
             error.toString()
         ]
     }
+}
+
+const getFileStream = async req => {
+    const fileExist = req.files && 'file' in req.files
+    if(fileExist){
+        return req.files.file
+    }
+
+    if(req.body.file !== undefined && req.body.file !== null){
+        const response = await axios.get(req.body.file, { responseType: 'arraybuffer' })
+        const buffer = Buffer.from(response.data, "utf-8")
+        
+        return {
+            data: buffer,
+            size: buffer.toString().length,
+            mimetype: response.headers['content-type']
+        }
+    }
+
+    return null
 }
 
 router.get("/me", validateAuthFields, async (req, res) => {
@@ -134,18 +155,16 @@ router.post("/upload", validateAuthFields, async (req, res) => {
         accessTokenSecret: req.headers.access_token_secret
     }
 
-    if(!req.files || !('file' in req.files)){
-        return res.status(HttpStatus.BAD_REQUEST).send({
-            errors: [
-                'No file uploaded'
-            ]
-        })
+    const fileStream = await getFileStream(req)
+
+    if(!fileStream || fileStream == null){
+        return res.status(HttpStatus.BAD_REQUEST).send({errors: ['No file uploaded']})
     }
     
     const data = {
-        data: req.files.file.data,
-        size: req.files.file.size,
-        mimeType: req.files.file.mimetype,
+        data: fileStream.data,
+        size: fileStream.size,
+        mimeType: fileStream.mimetype,
     }
     
     try {

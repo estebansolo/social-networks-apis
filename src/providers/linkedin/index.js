@@ -1,3 +1,4 @@
+import axios from "axios"
 import express from "express"
 import Api from "linkedin/service"
 import { HttpStatus } from "src/config/constants"
@@ -8,13 +9,34 @@ const router = express.Router()
 const errorHandler = res => {
     return error => {
         let errorData = error.toString()
-        if('response' in error && typeof error.response.data === "object"){
+        
+        if('response' in error && error.response != undefined && typeof error.response.data === "object"){
             errorData = error.response.data
             errorData = "message" in errorData ? errorData.message : errorData
         }
 
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({errors: [errorData]})
     }
+}
+
+const getFileStream = async req => {
+    const fileExist = req.files && 'file' in req.files
+    if(fileExist){
+        return req.files.file
+    }
+    
+    if(req.body.file !== undefined && req.body.file !== null){
+        const response = await axios.get(req.body.file, { responseType: 'arraybuffer' })
+        const buffer = Buffer.from(response.data, "utf-8")
+
+        return {
+            data: buffer,
+            size: buffer.toString().length,
+            mimetype: response.headers['content-type']
+        }
+    }
+
+    return null
 }
 
 router.get("/me", authToken, (req, res) => {
@@ -62,15 +84,16 @@ router.get("/upload", authToken, (req, res) => {
         .catch(errorHandler(res))
 })
 
-router.post("/upload", authToken, (req, res) => {
-    if(!req.files || !('file' in req.files)){
+router.post("/upload", authToken, async (req, res) => {
+    const fileStream = await getFileStream(req)
+    if(!fileStream || fileStream == null){
         return res.status(HttpStatus.BAD_REQUEST).send({errors: ['No file uploaded']})
     }
     
     const data = {
-        data: req.files.file.data,
-        size: req.files.file.size,
-        mimeType: req.files.file.mimetype,
+        data: fileStream.data,
+        size: fileStream.size,
+        mimeType: fileStream.mimetype,
         linkedinId: req.query.linkedin_id
     }
     

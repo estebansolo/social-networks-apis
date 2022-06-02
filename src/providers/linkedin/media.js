@@ -59,12 +59,12 @@ class Media {
         const headers = {}
         if (uploadInfo.mimeType.indexOf('image') !== -1){
             headers["Authorization"] = `Bearer ${this.token}`
-            headers["Content-Type"] = "application/json"
+            headers["Content-Type"] = uploadInfo.mimeType
         } else {
             headers["Content-Type"] = "application/octet-stream"
         }
 
-        return this._request(uploadInfo.uploadUrl, 'PUT', assetContent, headers).then(() => (uploadInfo))
+        return this._request(uploadInfo.uploadUrl, 'POST', assetContent, headers).then(() => (uploadInfo))
     }
 
     validateAsset(assetId) {
@@ -82,7 +82,15 @@ class Media {
     }
 
     async _request(url, method, data = {}, headers = {}) {
-        const response = await axios({url, method, data, headers})
+        const response = await axios({
+            url,
+            method,
+            data,
+            headers,
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity
+        })
+        
         return response.data
     }
 }
